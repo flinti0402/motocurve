@@ -1900,7 +1900,7 @@
                 }
               </style>
             `;
-            setTimeout(() => { lucide.createIcons(); }, 100);
+            setTimeout(() => { try { lucide.createIcons(); } catch(e){} }, 100);
           }
           return {
             setView: function() { return this; },
@@ -2388,7 +2388,7 @@
         statusLabel.innerText = 'Aus';
         statusLabel.style.color = '#ef4444';
         clearRadar();
-        showToast('Regen-Radar ausgeblendet');
+        showToast('Regen-Radar ausgeblended');
       }
     }
 
@@ -3297,6 +3297,7 @@
       lucide.createIcons();
     }
 
+    // Speech instruction helper
     function speakInstruction(text) {
       try {
         if (!('speechSynthesis' in window)) return;
