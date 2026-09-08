@@ -1585,22 +1585,24 @@
 
     <!-- Moto telemetry Dashboard -->
     <div class="nav-dashboard">
-      <div class="nav-dash-box">
-        <span class="nav-dash-val" id="navSpeed">62</span>
-        <span class="nav-dash-label">km/h</span>
-      </div>
-      <div class="nav-dash-box">
-        <span class="nav-dash-val" style="color: #60a5fa;" id="navDistanceRemaining">48</span>
-        <span class="nav-dash-label">Rest (km)</span>
-      </div>
-      <div class="nav-dash-box">
-        <span class="nav-dash-val" style="color: var(--accent-curvy);" id="navTimeRemaining">0:55</span>
-        <span class="nav-dash-label">Fahrzeit</span>
-      </div>
-      <!-- Nearest POI recommendation -->
-      <div class="nav-dash-box" style="border-color: var(--brand);">
-        <span class="nav-dash-val" style="font-size: 0.85rem; line-height: 1.25; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 4px;" id="navNextPoi">Laden...</span>
-        <span class="nav-dash-label" style="color: var(--brand);">Nächster Stopp</span>
+      <div class="nav-dashboard-content" style="display: grid; grid-template-columns: repeat(4, 1fr); width: 100%; gap: 10px;">
+        <div class="nav-dash-box">
+          <span class="nav-dash-val" id="navSpeed">62</span>
+          <span class="nav-dash-label">km/h</span>
+        </div>
+        <div class="nav-dash-box">
+          <span class="nav-dash-val" style="color: #60a5fa;" id="navDistanceRemaining">48</span>
+          <span class="nav-dash-label">Rest (km)</span>
+        </div>
+        <div class="nav-dash-box">
+          <span class="nav-dash-val" style="color: var(--accent-curvy);" id="navTimeRemaining">0:55</span>
+          <span class="nav-dash-label">Fahrzeit</span>
+        </div>
+        <!-- Nearest POI recommendation -->
+        <div class="nav-dash-box" style="border-color: var(--brand);">
+          <span class="nav-dash-val" style="font-size: 0.85rem; line-height: 1.25; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 4px;" id="navNextPoi">Laden...</span>
+          <span class="nav-dash-label" style="color: var(--brand);">Nächster Stopp</span>
+        </div>
       </div>
     </div>
 
@@ -1634,6 +1636,34 @@
 
   <!-- Application Logic -->
   <script>
+    // Global Javascript runtime diagnostic box to capture and display any Safari/Chrome exceptions directly!
+    window.onerror = function(message, source, lineno, colno, error) {
+      const errorBox = document.createElement('div');
+      errorBox.style.position = 'fixed';
+      errorBox.style.top = '10px';
+      errorBox.style.left = '10px';
+      errorBox.style.right = '10px';
+      errorBox.style.background = '#ef4444';
+      errorBox.style.color = '#fff';
+      errorBox.style.padding = '14px 20px';
+      errorBox.style.borderRadius = '12px';
+      errorBox.style.zIndex = '99999';
+      errorBox.style.fontFamily = 'monospace';
+      errorBox.style.fontSize = '0.8rem';
+      errorBox.style.lineHeight = '1.4';
+      errorBox.style.boxShadow = '0 10px 30px rgba(0,0,0,0.6)';
+      errorBox.style.border = '2px solid #fff';
+      errorBox.innerHTML = `
+        <strong>⚠️ System-Fehler auf Ihrem Gerät erkannt:</strong><br>
+        <span style="color:#ffe4e6;">${message}</span><br>
+        <div style="font-size:0.72rem; opacity:0.8; margin-top:6px; border-top:1px solid rgba(255,255,255,0.2); padding-top:4px;">
+          Datei: ${source.split('/').pop() || 'index.html'} (Zeile ${lineno}:${colno})
+        </div>
+      `;
+      document.body.appendChild(errorBox);
+      return false; 
+    };
+
     // Safe fallback check if Leaflet failed to load completely due to iFrame/CORS block
     if (typeof L === 'undefined') {
       window.L = {
@@ -1650,7 +1680,7 @@
                   <i data-lucide="map" style="width:48px; height:48px; color:var(--brand); margin-bottom:12px;"></i>
                   <h3 style="font-size:1.1rem; font-weight:700; color:#fff; margin-bottom:6px;">MotoCurve Simulator-Karte</h3>
                   <p style="font-size:0.8rem; color:var(--ink-muted); margin-bottom:14px; line-height:1.4;">
-                    Leaflet-Kartendienst wurde von der Sandbox blockiert. Der 2D-Vektorsimulator is aktiv! Alle Berechnungen, Schräglagen- & GPS-Navi-Simulationen laufen einwandfrei.
+                    Leaflet-Kartendienst wurde von der Sandbox blockiert. Der 2D-Vektorsimulator ist aktiv! Alle Berechnungen, Schräglagen- & GPS-Navi-Simulationen laufen einwandfrei.
                   </p>
                   <div style="display:inline-flex; gap:8px; background:rgba(255,255,255,0.05); padding:6px 12px; border-radius:20px; font-size:0.75rem; border:1px solid rgba(255,255,255,0.1);">
                     <span class="live-indicator"></span> <span>2D-Vektorsimulation aktiv</span>
@@ -1670,7 +1700,7 @@
                 }
               </style>
             `;
-            setTimeout(() => { lucide.createIcons(); }, 100);
+            setTimeout(() => { try { lucide.createIcons(); } catch(e){} }, 100);
           }
           return {
             setView: function() { return this; },
@@ -2144,7 +2174,6 @@
       simulatedRadarLayers = [];
     }
 
-    // Toggle Radar layer
     function toggleRadarLayer() {
       showRadarOnMap = !showRadarOnMap;
       const statusLabel = document.getElementById('radarLayerStatus');
@@ -2343,7 +2372,7 @@
 
               dropdown.appendChild(el);
             });
-            lucide.createIcons();
+            try { lucide.createIcons(); } catch(e){}
           } else {
             dropdown.style.display = 'none';
           }
@@ -2381,7 +2410,7 @@
           if (matchesCount === 0) {
             dropdown.style.display = 'none';
           } else {
-            lucide.createIcons();
+            try { lucide.createIcons(); } catch(e){}
           }
         }
       }, 400); // 400ms typing delay
@@ -2430,6 +2459,12 @@
             // Fallback to Stuttgart if not resolved at all
             coordinates.push([48.7758, 9.1829]);
           }
+        }
+
+        // Safety safeguard to check coordinate counts
+        if (coordinates.length < 2) {
+          showToast("⚠️ Fehler: Nicht genügend Wegpunkte gefunden!");
+          return;
         }
 
         // 3. Compute road route using free OSRM API (or curved local fallback)
