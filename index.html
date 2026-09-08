@@ -914,6 +914,10 @@
       box-shadow: var(--shadow);
     }
 
+    .lean-widget:hover {
+      border-color: var(--brand);
+    }
+
     .lean-title {
       font-size: 0.7rem;
       color: var(--ink-muted);
@@ -1441,7 +1445,7 @@
             <!-- Quick Start Point Input with Suggestions Dropdown -->
             <div class="route-point" style="background: rgba(13,17,23,0.85); padding: 6px 10px; position: relative;">
               <span class="point-dot start" style="width: 8px; height: 8px;"></span>
-              <input type="text" class="route-input" id="quickInputStart" placeholder="PLZ, Ort, Straße eingeben..." value="Baden-Baden, Deutschland" style="font-size: 0.8rem; height: 24px; color: white;" oninput="syncInputs('start', 'quick'); fetchAddressSuggestions(this, 'start')">
+              <input type="text" class="route-input" id="quickInputStart" placeholder="PLZ, Ort, Straße eingeben..." value="Baden-Baden, Deutschland" style="font-size: 0.8rem; height: 24px; color: white;" oninput="syncInputs('start', 'quick'); fetchAddressSuggestions(this, 'start')" onblur="setTimeout(() => { document.getElementById('suggestionsStart').style.display='none'; }, 250)">
               <span class="point-action" onclick="useCurrentLocation('start')" title="Mein aktueller Standort über GPS" style="color: var(--brand); padding: 2px;">
                 <i data-lucide="crosshair" style="width: 14px; height: 14px;"></i>
               </span>
@@ -1451,7 +1455,7 @@
             <!-- Quick End Point Input with Suggestions Dropdown -->
             <div class="route-point" style="background: rgba(13,17,23,0.85); padding: 6px 10px; position: relative;">
               <span class="point-dot end" style="width: 8px; height: 8px;"></span>
-              <input type="text" class="route-input" id="quickInputEnd" placeholder="PLZ, Ort, Straße eingeben..." value="Freudenstadt, Schwarzwald" style="font-size: 0.8rem; height: 24px; color: white;" oninput="syncInputs('end', 'quick'); fetchAddressSuggestions(this, 'end')">
+              <input type="text" class="route-input" id="quickInputEnd" placeholder="PLZ, Ort, Straße eingeben..." value="Freudenstadt, Schwarzwald" style="font-size: 0.8rem; height: 24px; color: white;" oninput="syncInputs('end', 'quick'); fetchAddressSuggestions(this, 'end')" onblur="setTimeout(() => { document.getElementById('suggestionsEnd').style.display='none'; }, 250)">
               <span class="point-action" onclick="useCurrentLocation('end')" title="Mein aktueller Standort über GPS" style="color: var(--brand); padding: 2px;">
                 <i data-lucide="crosshair" style="width: 14px; height: 14px;"></i>
               </span>
@@ -1873,7 +1877,7 @@
             el.innerHTML = `
               <div style="width:100%; height:100%; background:#111; display:flex; flex-direction:column; align-items:center; justify-content:center; position:relative; overflow:hidden; border-radius:12px;">
                 <!-- Animated tech grid background -->
-                <div style="position:absolute; inset:0; background-image: radial-gradient(rgba(245,158,11,0.08) 1.5px, transparent 1.5px); background-size: 24px 24px; animation: grid-scroll 25s linear infinite;"></div>
+                <div style="position:absolute; inset:0; background-image: radial-gradient(rgba(245, 158, 11, 0.08) 1.5px, transparent 1.5px); background-size: 24px 24px; animation: grid-scroll 25s linear infinite;"></div>
                 
                 <!-- Biker status panel -->
                 <div style="z-index:20; text-align:center; padding: 24px; max-width:85%;">
@@ -2388,7 +2392,7 @@
         statusLabel.innerText = 'Aus';
         statusLabel.style.color = '#ef4444';
         clearRadar();
-        showToast('Regen-Radar ausgeblended');
+        showToast('Regen-Radar ausgeblendet');
       }
     }
 
@@ -2565,9 +2569,6 @@
                 
                 // Instantly center map view on selected search result coordinate!
                 map.setView([parseFloat(item.lat), parseFloat(item.lon)], 12);
-
-                // Auto-trigger route recalculation upon click!
-                recalculateRoute();
               });
 
               dropdown.appendChild(el);
@@ -2600,7 +2601,6 @@
                   document.getElementById('quickInputEnd').value = label;
                 }
                 showToast(`Ort ausgewählt: ${label}`);
-                recalculateRoute();
               });
               dropdown.appendChild(el);
               matchesCount++;
@@ -3297,7 +3297,6 @@
       lucide.createIcons();
     }
 
-    // Speech instruction helper
     function speakInstruction(text) {
       try {
         if (!('speechSynthesis' in window)) return;
@@ -3311,6 +3310,7 @@
       }
     }
 
+    // Close Navigation
     function closeNavOverlay() {
       stopRouteSimulation();
       stopRealGPSTracking();
