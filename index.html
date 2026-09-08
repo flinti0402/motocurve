@@ -1664,6 +1664,193 @@
       return false; 
     };
 
+    // --- Dynamic database of pre-mapped motorcycling hubs for offline / instant fallback geocoding ---
+    const LOCAL_GEOCODE_DB = {
+      "baden-baden": [48.7619, 8.2410],
+      "freudenstadt": [48.4639, 8.4110],
+      "mummelsee": [48.6010, 8.2015],
+      "ruhestein": [48.5620, 8.2230],
+      "baiersbronn": [48.5140, 8.3120],
+      "st. ulrich": [46.5750, 11.6700],
+      "corvara": [46.5510, 11.8730],
+      "sellajoch": [46.5500, 11.7580],
+      "pordoijoch": [46.4880, 11.8100],
+      "arabba": [46.5180, 11.8740],
+      "zell am see": [47.3235, 12.7969],
+      "heiligenblut": [47.0410, 12.8630],
+      "fusch": [47.1680, 12.8250],
+      "fuscher törl": [47.1167, 12.8430],
+      "edelweißspitze": [47.1150, 12.8310],
+      "ahrweiler": [50.5430, 7.0980],
+      "nürburgring": [50.3340, 6.9420],
+      "kesseling": [50.4950, 7.0200],
+      "adenau": [50.3830, 6.9320],
+      "goslar": [51.9060, 10.4280],
+      "kelbra": [51.4120, 11.0560],
+      "okertalsperre": [51.8480, 10.4780],
+      "braunlage": [51.7260, 10.6120]
+    };
+
+    // --- Preset Data for German / Alpine Motorcycle Classics ---
+    const PRESET_TOURS = {
+      blackforest: {
+        name: "Schwarzwald Hochstraße & Mummelsee",
+        startName: "Baden-Baden, Deutschland",
+        endName: "Freudenstadt, Schwarzwald",
+        vias: ["Mummelsee Hornisgrinde", "Ruhestein Pass"],
+        coords: [
+          [48.7619, 8.2410], // Baden-Baden
+          [48.7200, 8.2520], // Schöneck
+          [48.6650, 8.2310], // Unterstmatt
+          [48.6010, 8.2015], // Mummelsee
+          [48.5620, 8.2230], // Ruhestein
+          [48.5140, 8.3120], // Baiersbronn kurvig
+          [48.4639, 8.4110]  // Freudenstadt
+        ],
+        navigationSteps: [
+          { dist: "300 m", text: "Verlassen Sie Baden-Baden Kurhaus nach Süden", type: "arrow-up", poiIdx: 0 },
+          { dist: "2.4 km", text: "Rechts abbiegen auf B500 (Schwarzwaldhochstraße)", type: "arrow-up-right", poiIdx: 0 },
+          { dist: "6.8 km", text: "Achtung: Schnelle Schräglagenwechsel und Kurvenkombination", type: "activity", poiIdx: 0 },
+          { dist: "12.0 km", text: "Passieren Sie Unterstmatt - Straßengrip ist exzellent", type: "arrow-up", poiIdx: 0 },
+          { dist: "1.5 km", text: "Zwischenstopp erreicht: Bikertreff Mummelsee", type: "flag", poiIdx: 0 },
+          { dist: "4.2 km", text: "Links abbiegen Richtung Ruhestein Pass", type: "arrow-up-left", poiIdx: 1 },
+          { dist: "8.5 km", text: "Scharfe Kehren bergab nach Baiersbronn", type: "corner-down-right", poiIdx: 1 },
+          { dist: "10.0 km", text: "Ziel erreicht: Freudenstadt Marktplatz", type: "check-circle", poiIdx: 2 }
+        ],
+        curvyScore: 95,
+        distance: 76,
+        duration: "1h 40m",
+        elevationGain: 1420,
+        weather: [
+          { loc: "Baden-Baden", temp: "21°C", cond: "sunny", icon: "sun", rain: "0%" },
+          { loc: "Mummelsee", temp: "17°C", cond: "cloudy", icon: "cloud-sun", rain: "10%" },
+          { loc: "Ruhestein", temp: "18°C", cond: "sunny", icon: "sun", rain: "5%" },
+          { loc: "Freudenstadt", temp: "20°C", cond: "sunny", icon: "sun", rain: "0%" }
+        ],
+        tip: "Extrem kurvige Streckenführung entlang der B500 mit fantastischem Asphalt und Panoramablicken ins Rheintal."
+      },
+      dolomites: {
+        name: "Dolomiten 4-Pässe Sella Runde",
+        startName: "Gröden (St. Ulrich)",
+        endName: "Corvara (Alta Badia)",
+        vias: ["Sellajoch (2244m)", "Pordoijoch (2239m)", "Campolongopass"],
+        coords: [
+          [46.5750, 11.6700], // St. Ulrich
+          [46.5500, 11.7580], // Sellajoch
+          [46.4880, 11.8100], // Pordoijoch
+          [46.5180, 11.8740], // Arabba / Campolongo
+          [46.5510, 11.8730]  // Corvara
+        ],
+        navigationSteps: [
+          { dist: "100 m", text: "Fahren Sie Richtung Osten auf Grödnertalstraße", type: "arrow-up", poiIdx: 4 },
+          { dist: "1.2 km", text: "Links abbiegen Richtung Sellajoch Kehren", type: "arrow-up-left", poiIdx: 4 },
+          { dist: "5.8 km", text: "Haarnadelkurven bergauf (Gänge 1 & 2 verwenden)", type: "activity", poiIdx: 4 },
+          { dist: "2.1 km", text: "Scheitelpunkt Sellajoch (2244m) erreicht", type: "flag", poiIdx: 4 },
+          { dist: "7.2 km", text: "Abfahrt zum Pordoijoch (2239m)", type: "arrow-down-right", poiIdx: 5 },
+          { dist: "3.5 km", text: "Ziel erreicht: Corvara (Alta Badia)", type: "check-circle", poiIdx: 6 }
+        ],
+        curvyScore: 99,
+        distance: 68,
+        duration: "2h 15m",
+        elevationGain: 2850,
+        weather: [
+          { loc: "St. Ulrich", temp: "18°C", cond: "sunny", icon: "sun", rain: "0%" },
+          { loc: "Sellajoch", temp: "12°C", cond: "partly-cloudy", icon: "cloud-sun", rain: "15%" },
+          { loc: "Pordoijoch", temp: "11°C", cond: "sunny", icon: "sun", rain: "10%" },
+          { loc: "Corvara", temp: "16°C", cond: "sunny", icon: "sun", rain: "5%" }
+        ],
+        tip: "Königsetappe der Alpen! Dutzende Haarnadelkurven. Idealer Reifendruck und vorausschauendes Fahren bei Kehren empfohlen."
+      },
+      alps: {
+        name: "Großglockner Hochalpenstraße",
+        startName: "Zell am See",
+        endName: "Heiligenblut",
+        vias: ["Fuscher Törl", "Edelweißspitze (2571m)", "Kaiser-Franz-Josefs-Höhe"],
+        coords: [
+          [47.3235, 12.7969], // Zell am See
+          [47.1680, 12.8250], // Fusch
+          [47.1167, 12.8430], // Fuscher Törl
+          [47.0750, 12.7510], // Franz-Josefs-Höhe
+          [47.0410, 12.8630]  // Heiligenblut
+        ],
+        navigationSteps: [
+          { dist: "500 m", text: "Verlassen Sie Zell am See auf der Brucker Bundesstraße", type: "arrow-up", poiIdx: 4 },
+          { dist: "12.0 km", text: "Zahlstelle Ferleiten passieren", type: "arrow-up", poiIdx: 4 },
+          { dist: "4.5 km", text: "Serpentinen bergauf zum Fuscher Törl", type: "activity", poiIdx: 4 },
+          { dist: "1.2 km", text: "Rechts abbiegen auf Kopfsteinpflaster zur Edelweißspitze", type: "corner-up-right", poiIdx: 4 },
+          { dist: "18.0 km", text: "Abfahrt Richtung Heiligenblut", type: "arrow-down", poiIdx: 4 },
+          { dist: "2.0 km", text: "Ziel erreicht: Heiligenblut", type: "check-circle", poiIdx: 4 }
+        ],
+        curvyScore: 92,
+        distance: 54,
+        duration: "1h 35m",
+        elevationGain: 2100,
+        weather: [
+          { loc: "Zell am See", temp: "22°C", cond: "sunny", icon: "sun", rain: "0%" },
+          { loc: "Edelweißsp.", temp: "9°C", cond: "windy", icon: "wind", rain: "10%" },
+          { loc: "Heiligenblut", temp: "19°C", cond: "sunny", icon: "sun", rain: "0%" }
+        ],
+        tip: "Höchste Passstraße Österreichs. Griffiger Asphalt, weite Kehren und atemberaubender Blick auf den Pasterzengletscher."
+      },
+      eifel: {
+        name: "Eifel Kurvenzauber & Nürburgring",
+        startName: "Ahrweiler",
+        endName: "Nürburgring Nordschleife",
+        vias: ["Kesseling Tal", "Adenau Kurven"],
+        coords: [
+          [50.5430, 7.0980], // Ahrweiler
+          [50.4950, 7.0200], // Kesseling
+          [50.3830, 6.9320], // Adenau
+          [50.3340, 6.9420]  // Nürburgring
+        ],
+        navigationSteps: [
+          { dist: "200 m", text: "Fahren Sie nach Westen auf Rotweinstraße", type: "arrow-up", poiIdx: 7 },
+          { dist: "8.5 km", text: "Kurviger Straßenabschnitt durch das Kesselinger Tal", type: "activity", poiIdx: 7 },
+          { dist: "14.2 km", text: "Rechts abbiegen Richtung Adenau / Nordschleife", type: "arrow-up-right", poiIdx: 7 },
+          { dist: "2.1 km", text: "Ziel erreicht: Nürburgring Fahrerlager", type: "check-circle", poiIdx: 7 }
+        ],
+        curvyScore: 88,
+        distance: 52,
+        duration: "1h 10m",
+        elevationGain: 980,
+        weather: [
+          { loc: "Ahrweiler", temp: "20°C", cond: "sunny", icon: "sun", rain: "0%" },
+          { loc: "Kesseling", temp: "19°C", cond: "sunny", icon: "sun", rain: "0%" },
+          { loc: "Nürburg", temp: "18°C", cond: "cloudy", icon: "cloud-sun", rain: "5%" }
+        ],
+        tip: "Flüssige Schräglagenwechsel durch das Ahrtal und Hoch-Eifel. Beliebter Biker-Treffpunkt in Adenau."
+      },
+      harz: {
+        name: "Harz Kyffhäuser & Okertal",
+        startName: "Goslar",
+        endName: "Kelbra (Kyffhäuser)",
+        vias: ["Okertalsperre", "Braunlage", "36-Kurven Kyffhäuser"],
+        coords: [
+          [51.9060, 10.4280], // Goslar
+          [51.8480, 10.4780], // Okertalsperre
+          [51.7260, 10.6120], // Braunlage
+          [51.4120, 11.0560]  // Kyffhäuser Kelbra
+        ],
+        navigationSteps: [
+          { dist: "300 m", text: "Fahren Sie nach Süden Richtung Okertalsperre", type: "arrow-up", poiIdx: 0 },
+          { dist: "9.2 km", text: "Passieren Sie die Oker-Kurven mit Tempolimit", type: "activity", poiIdx: 0 },
+          { dist: "15.0 km", text: "Braunlage passieren und Richtung Kyffhäuser folgen", type: "arrow-up", poiIdx: 0 },
+          { dist: "22.0 km", text: "Start der 36 Kyffhäuser Kurven - Vorsicht bei Nässe!", type: "activity", poiIdx: 0 },
+          { dist: "4.0 km", text: "Ziel erreicht: Kelbra Bikertreff", type: "check-circle", poiIdx: 0 }
+        ],
+        curvyScore: 94,
+        distance: 82,
+        duration: "1h 45m",
+        elevationGain: 1350,
+        weather: [
+          { loc: "Goslar", temp: "21°C", cond: "sunny", icon: "sun", rain: "0%" },
+          { loc: "Braunlage", temp: "17°C", cond: "sunny", icon: "sun", rain: "0%" },
+          { loc: "Kyffhäuser", temp: "22°C", cond: "sunny", icon: "sun", rain: "0%" }
+        ],
+        tip: "Der Kyffhäuser bietet 36 legendäre Kurven auf 4 Kilometern reinstem Motorrad-Genuss."
+      }
+    };
+
     // Safe fallback check if Leaflet failed to load completely due to iFrame/CORS block
     if (typeof L === 'undefined') {
       window.L = {
