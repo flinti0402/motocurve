@@ -914,10 +914,6 @@
       box-shadow: var(--shadow);
     }
 
-    .lean-widget:hover {
-      border-color: var(--brand);
-    }
-
     .lean-title {
       font-size: 0.7rem;
       color: var(--ink-muted);
@@ -1664,6 +1660,23 @@
       return false; 
     };
 
+    // --- Simulated POIs for Motorcycle tours ---
+    const POI_DATA = [
+      // Black forest POIs
+      { type: "meetup", name: "Bikertreff Mummelsee (B500)", lat: 48.6010, lng: 8.2015, text: "Imbiss & Top Aussichtspunkt" },
+      { type: "meetup", name: "Bikertreff Ruhestein", lat: 48.5620, lng: 8.2230, text: "Beliebter Treffpunkt mit Café" },
+      { type: "fuel", name: "Aral Tankstelle Freudenstadt", lat: 48.4639, lng: 8.4110, text: "Letzte Tankmöglichkeit auf Pass-Strecke" },
+      { type: "pass", name: "Schwarzwald Passhöhe Ruhestein", lat: 48.5640, lng: 8.2250, text: "Höhe: 915m ü. NHN" },
+      
+      // Dolomites POIs
+      { type: "pass", name: "Sellajoch Passhöhe (2244m)", lat: 46.5500, lng: 11.7580, text: "Grip: Sehr hoch. Atemberaubendes Sella-Massiv" },
+      { type: "pass", name: "Pordoijoch Passhöhe (2239m)", lat: 46.4880, lng: 11.8100, text: "Kehrenanzahl: 33 Kehren" },
+      { type: "fuel", name: "Eni Tankstelle Corvara", lat: 46.5510, lng: 11.8730, text: "98 Oktan verfügbar" },
+
+      // Nürburgring POIs
+      { type: "meetup", name: "Devil's Diner (Nordschleife)", lat: 50.3340, lng: 6.9420, text: "Kult-Treffpunkt für Benzingespräche" }
+    ];
+
     // --- Dynamic database of pre-mapped motorcycling hubs for offline / instant fallback geocoding ---
     const LOCAL_GEOCODE_DB = {
       "baden-baden": [48.7619, 8.2410],
@@ -1711,7 +1724,7 @@
           { dist: "300 m", text: "Verlassen Sie Baden-Baden Kurhaus nach Süden", type: "arrow-up", poiIdx: 0 },
           { dist: "2.4 km", text: "Rechts abbiegen auf B500 (Schwarzwaldhochstraße)", type: "arrow-up-right", poiIdx: 0 },
           { dist: "6.8 km", text: "Achtung: Schnelle Schräglagenwechsel und Kurvenkombination", type: "activity", poiIdx: 0 },
-          { dist: "12.0 km", text: "Passieren Sie Unterstmatt - Straßengrip ist exzellent", type: "arrow-up", poiIdx: 0 },
+          { dist: "12.0 km", text: "Passieren Sie Unterstmatt - Straßengrip is exzellent", type: "arrow-up", poiIdx: 0 },
           { dist: "1.5 km", text: "Zwischenstopp erreicht: Bikertreff Mummelsee", type: "flag", poiIdx: 0 },
           { dist: "4.2 km", text: "Links abbiegen Richtung Ruhestein Pass", type: "arrow-up-left", poiIdx: 1 },
           { dist: "8.5 km", text: "Scharfe Kehren bergab nach Baiersbronn", type: "corner-down-right", poiIdx: 1 },
@@ -1818,7 +1831,7 @@
           { loc: "Kesseling", temp: "19°C", cond: "sunny", icon: "sun", rain: "0%" },
           { loc: "Nürburg", temp: "18°C", cond: "cloudy", icon: "cloud-sun", rain: "5%" }
         ],
-        tip: "Flüssige Schräglagenwechsel durch das Ahrtal and Hoch-Eifel. Beliebter Biker-Treffpunkt in Adenau."
+        tip: "Flüssige Schräglagenwechsel durch das Ahrtal und Hoch-Eifel. Beliebter Biker-Treffpunkt in Adenau."
       },
       harz: {
         name: "Harz Kyffhäuser & Okertal",
@@ -1887,7 +1900,7 @@
                 }
               </style>
             `;
-            setTimeout(() => { try { lucide.createIcons(); } catch(e){} }, 100);
+            setTimeout(() => { lucide.createIcons(); }, 100);
           }
           return {
             setView: function() { return this; },
@@ -2559,7 +2572,7 @@
 
               dropdown.appendChild(el);
             });
-            lucide.createIcons();
+            try { lucide.createIcons(); } catch(e){}
           } else {
             dropdown.style.display = 'none';
           }
