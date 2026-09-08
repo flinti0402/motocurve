@@ -1818,7 +1818,7 @@
           { loc: "Kesseling", temp: "19°C", cond: "sunny", icon: "sun", rain: "0%" },
           { loc: "Nürburg", temp: "18°C", cond: "cloudy", icon: "cloud-sun", rain: "5%" }
         ],
-        tip: "Flüssige Schräglagenwechsel durch das Ahrtal und Hoch-Eifel. Beliebter Biker-Treffpunkt in Adenau."
+        tip: "Flüssige Schräglagenwechsel durch das Ahrtal and Hoch-Eifel. Beliebter Biker-Treffpunkt in Adenau."
       },
       harz: {
         name: "Harz Kyffhäuser & Okertal",
@@ -2559,7 +2559,7 @@
 
               dropdown.appendChild(el);
             });
-            try { lucide.createIcons(); } catch(e){}
+            lucide.createIcons();
           } else {
             dropdown.style.display = 'none';
           }
@@ -3419,6 +3419,19 @@
       if (label) label.innerText = isOpened ? 'Schließen' : 'Anzeigen';
       const chevron = document.getElementById('drawerChevron');
       if (chevron) chevron.style.transform = isOpened ? 'rotate(180deg)' : 'rotate(0deg)';
+    }
+
+    // Gorgeous custom Toast helper!
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      if (toast) {
+        const msgEl = document.getElementById('toastMessage');
+        if (msgEl) msgEl.innerText = msg;
+        toast.classList.add('show');
+        setTimeout(() => {
+          toast.classList.remove('show');
+        }, 3500);
+      }
     }
 
     // DOMContentLoaded Orchestration
