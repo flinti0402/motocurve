@@ -2084,7 +2084,7 @@
       viaEl.className = 'route-point';
       viaEl.innerHTML = `
         <span class="point-dot via"></span>
-        <input type="text" class="route-input" value="${latlng.lat.toFixed(4)}, ${latlng.lng.toFixed(4)}" placeholder="Wegpunkt / Kurvenstrecke">
+        <input type="text" class="route-input" value="${latlng.lat.toFixed(4)}" placeholder="Wegpunkt / Kurvenstrecke">
         <span class="point-action" onclick="this.parentElement.remove(); recalculateRoute();" title="Entfernen">
           <i data-lucide="x" style="width: 14px; height: 14px;"></i>
         </span>
@@ -2888,6 +2888,48 @@
        SMARTPHONE REAL-TIME & SIMULATED GPS NAVIGATION LOGIC
        ======================================================== */
     
+    function startRealGPSTracking() {
+      if (gpsWatchId) return;
+      if (navigator.geolocation) {
+        gpsWatchId = navigator.geolocation.watchPosition((pos) => {
+          if (isSimulationMode) return; // Simulation overrides real GPS
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+          const currentCoord = [lat, lng];
+
+          if (simCurrentLocationMarker) {
+            simCurrentLocationMarker.setLatLng(currentCoord);
+          }
+          if (navMap) {
+            navMap.panTo(currentCoord);
+          }
+
+          // Update speed (convert m/s to km/h)
+          const speed = pos.coords.speed ? Math.round(pos.coords.speed * 3.6) : 0;
+          const speedEl = document.getElementById('navSpeed');
+          if (speedEl) speedEl.innerText = speed;
+
+          const distEl = document.getElementById('navDistanceRemaining');
+          if (distEl) distEl.innerText = "Live";
+          const timeEl = document.getElementById('navTimeRemaining');
+          if (timeEl) timeEl.innerText = "GPS";
+        }, (err) => {
+          console.warn("Echtzeit GPS-Tracking blockiert oder nicht verfügbar: ", err);
+        }, {
+          enableHighAccuracy: true,
+          maximumAge: 1000,
+          timeout: 5000
+        });
+      }
+    }
+
+    function stopRealGPSTracking() {
+      if (gpsWatchId) {
+        navigator.geolocation.clearWatch(gpsWatchId);
+        gpsWatchId = null;
+      }
+    }
+
     function openNavOverlay() {
       const overlay = document.getElementById('navOverlay');
       if (overlay) overlay.classList.add('active');
@@ -3310,7 +3352,6 @@
       }
     }
 
-    // Close Navigation
     function closeNavOverlay() {
       stopRouteSimulation();
       stopRealGPSTracking();
